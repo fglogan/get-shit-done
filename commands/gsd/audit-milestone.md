@@ -18,6 +18,7 @@ Verify milestone achieved its definition of done. Check requirements coverage, c
 
 <execution_context>
 @~/.claude/get-shit-done/workflows/audit-milestone.md
+@~/.claude/get-shit-done/references/parity-refactor-guidance.md
 </execution_context>
 
 <context>

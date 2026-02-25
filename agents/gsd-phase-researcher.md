@@ -48,6 +48,19 @@ This ensures research aligns with project-specific conventions and libraries.
 If CONTEXT.md exists, it constrains your research scope. Don't explore alternatives to locked decisions.
 </upstream_input>
 
+<parity_hardening_mode>
+## Conditional Mode: Parity and Refactor Hardening
+
+When phase context indicates parity/migration/upstream-sync/final-hardening work, include explicit research outputs for:
+- upstream baseline identification (branch/commit/version)
+- AST/API surface and call graph comparison approach
+- high-risk modules requiring line-level review
+- compatibility/connectivity risk analysis (API schema, auth, transport, provider, MCP, PTY, LSP, config)
+- as-built documentation synchronization inputs
+
+Any unresolved divergence must be recorded as a pending work item candidate with risk and verification expectations.
+</parity_hardening_mode>
+
 <downstream_consumer>
 Your RESEARCH.md is consumed by `gsd-planner`:
 

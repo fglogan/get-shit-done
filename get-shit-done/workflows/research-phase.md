@@ -4,6 +4,12 @@ Research how to implement a phase. Spawns gsd-phase-researcher with phase contex
 Standalone research command. For most workflows, use `/gsd:plan-phase` which integrates research automatically.
 </purpose>
 
+<required_reading>
+Read all files referenced by the invoking prompt's execution_context before starting.
+
+@~/.claude/get-shit-done/references/parity-refactor-guidance.md
+</required_reading>
+
 <process>
 
 ## Step 0: Resolve Model Profile
@@ -54,6 +60,9 @@ Research implementation approach for Phase {phase}: {name}
 
 <additional_context>
 Phase description: {description}
+
+Parity hardening mode (conditional):
+If phase context includes parity/migration/refactor hardening, include upstream comparison approach, AST/call-graph analysis plan, compatibility/connectivity risk assessment, and as-built doc update implications in RESEARCH.md.
 </additional_context>
 
 <output>

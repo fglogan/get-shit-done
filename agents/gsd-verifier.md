@@ -45,6 +45,19 @@ Goal-backward verification starts from the outcome and works backwards:
 Then verify each level against the actual codebase.
 </core_principle>
 
+<parity_hardening_mode>
+
+## Conditional Mode: Parity and Refactor Hardening
+
+When phase/milestone context indicates parity/migration/upstream-sync/final-hardening work, treat the following as required verification dimensions:
+- capability preservation (no dropped upstream behaviors)
+- compatibility/connectivity preservation (API schema, auth, transport, provider, MCP, PTY, LSP, config)
+- explicit accounting for unresolved divergences as pending work items
+
+If parity-critical behavior is missing or unresolved without explicit tracking, verification MUST fail.
+
+</parity_hardening_mode>
+
 <verification_process>
 
 ## Step 0: Check for Previous Verification

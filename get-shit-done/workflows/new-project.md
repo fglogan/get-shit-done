@@ -4,6 +4,8 @@ Initialize a new project through unified flow: questioning, research (optional),
 
 <required_reading>
 Read all files referenced by the invoking prompt's execution_context before starting.
+
+@~/.claude/get-shit-done/references/parity-refactor-guidance.md
 </required_reading>
 
 <auto_mode>
@@ -854,6 +856,7 @@ Good requirements are:
 - **User-centric:** "User can X" (not "System does Y")
 - **Atomic:** One capability per requirement (not "User can login and manage profile")
 - **Independent:** Minimal dependencies on other requirements
+- **Parity-safe (for migration/refactor projects):** Preserve capability, compatibility, and connectivity expectations explicitly
 
 Reject vague requirements. Push for specificity:
 - "Handle authentication" → "User can log in with email/password and stay logged in across sessions"
@@ -923,7 +926,13 @@ Create roadmap:
 3. Derive 2-5 success criteria per phase (observable user behaviors)
 4. Validate 100% coverage
 5. Write files immediately (ROADMAP.md, STATE.md, update REQUIREMENTS.md traceability)
-6. Return ROADMAP CREATED with summary
+6. If project intent is parity/migration/refactor hardening, include explicit phases for:
+   - AST + call graph comparison against upstream
+   - line-by-line review of high-risk code/config/structure files
+   - compatibility/connectivity verification
+   - as-built documentation sync
+   - tracking unresolved divergences as explicit pending tasks
+7. Return ROADMAP CREATED with summary
 
 Write files first, then return. This ensures artifacts persist even if context is lost.
 </instructions>
@@ -1109,6 +1118,7 @@ Exit skill and invoke SlashCommand("/gsd:discuss-phase 1 --auto")
 - [ ] ROADMAP.md created with phases, requirement mappings, success criteria
 - [ ] STATE.md initialized
 - [ ] REQUIREMENTS.md traceability updated
+- [ ] (Parity mode) Roadmap includes explicit parity/compatibility/doc-sync phases or tasks
 - [ ] User knows next step is `/gsd:discuss-phase 1`
 
 **Atomic commits:** Each phase commits its artifacts immediately. If context is lost, artifacts persist.

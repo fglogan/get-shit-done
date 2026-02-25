@@ -63,6 +63,21 @@ Don't find articles supporting your initial guess — find what the ecosystem ac
 
 </research_modes>
 
+<parity_hardening_mode>
+
+## Conditional Mode: Parity and Migration Projects
+
+If project or milestone intent includes parity/migration/refactor hardening, research outputs must additionally cover:
+- upstream baseline inventory (code, config, structure)
+- structural comparison inputs (AST/API and call graph approach)
+- high-risk areas for line-level review
+- capability/compatibility/connectivity preservation risks
+- as-built documentation synchronization requirements
+
+Do not leave divergences implicit; enumerate unresolved items so roadmapping can assign explicit follow-up phases.
+
+</parity_hardening_mode>
+
 <tool_strategy>
 
 ## Tool Priority Order

@@ -21,7 +21,14 @@ Research how to implement a phase. Spawns gsd-phase-researcher agent with phase 
 **Orchestrator role:** Parse phase, validate against roadmap, check existing research, gather context, spawn researcher agent, present results.
 
 **Why subagent:** Research burns context fast (WebSearch, Context7 queries, source verification). Fresh 200k context for investigation. Main context stays lean for user interaction.
+
+For parity/migration/refactor hardening phases, research must include upstream comparison, structural analysis strategy (AST/call graph), compatibility/connectivity risk checks, and as-built doc synchronization inputs.
 </objective>
+
+<execution_context>
+@~/.claude/get-shit-done/workflows/research-phase.md
+@~/.claude/get-shit-done/references/parity-refactor-guidance.md
+</execution_context>
 
 <context>
 Phase number: $ARGUMENTS (required)

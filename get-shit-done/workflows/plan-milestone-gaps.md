@@ -4,6 +4,8 @@ Create all phases necessary to close gaps identified by `/gsd:audit-milestone`. 
 
 <required_reading>
 Read all files referenced by the invoking prompt's execution_context before starting.
+
+@~/.claude/get-shit-done/references/parity-refactor-guidance.md
 </required_reading>
 
 <process>
@@ -46,6 +48,7 @@ Cluster related gaps into logical phases:
 - Same subsystem (auth, API, UI) → combine
 - Dependency order (fix stubs before wiring)
 - Keep phases focused: 2-4 tasks each
+- For parity/migration milestones, include a dedicated phase if needed for upstream comparison, compatibility/connectivity verification, and as-built doc sync
 
 **Example grouping:**
 ```
@@ -270,5 +273,6 @@ becomes:
 - [ ] Coverage count updated in REQUIREMENTS.md
 - [ ] Phase directories created
 - [ ] Changes committed (includes REQUIREMENTS.md)
+- [ ] (Parity mode) Gap closure plan includes explicit parity/compatibility/doc-sync work where audit indicates divergence risk
 - [ ] User knows to run `/gsd:plan-phase` next
 </success_criteria>

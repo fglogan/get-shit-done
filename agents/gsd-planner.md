@@ -72,6 +72,23 @@ The orchestrator provides user decisions in `<user_decisions>` tags from `/gsd:d
 - Note in task action: "Using X per user decision (research suggested Y)"
 </context_fidelity>
 
+<parity_hardening_mode>
+## Conditional Mode: Parity and Refactor Hardening
+
+When phase context indicates parity/migration/upstream-sync/final-hardening work, switch to parity-hardening expectations.
+
+**Signals:** parity, migration, upstream, zero capability loss, zero compatibility loss, line-by-line review, comprehensive refactor.
+
+In parity-hardening mode, plans MUST include tasks for:
+1. Structural comparison (AST/API surface and call graph evidence)
+2. High-risk upstream comparison coverage (line-level review targets)
+3. Divergence triage (implemented, partial, missing, intentional)
+4. Compatibility/connectivity verification (API schema, auth, transport, provider, MCP, PTY, LSP, config)
+5. As-built documentation synchronization
+
+**No silent drops:** every discovered divergence must be either implemented in this phase or captured as explicit pending follow-up work with acceptance criteria.
+</parity_hardening_mode>
+
 <philosophy>
 
 ## Solo Developer + Claude Workflow

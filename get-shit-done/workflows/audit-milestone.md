@@ -4,6 +4,8 @@ Verify milestone achieved its definition of done by aggregating phase verificati
 
 <required_reading>
 Read all files referenced by the invoking prompt's execution_context before starting.
+
+@~/.claude/get-shit-done/references/parity-refactor-guidance.md
 </required_reading>
 
 <process>
@@ -126,6 +128,13 @@ For each REQ-ID, determine status using all three sources:
 **REQUIRED:** Any `unsatisfied` requirement MUST force `gaps_found` status on the milestone audit.
 
 **Orphan detection:** Requirements present in REQUIREMENTS.md traceability table but absent from ALL phase VERIFICATION.md files MUST be flagged as orphaned. Orphaned requirements are treated as `unsatisfied` — they were assigned but never verified by any phase.
+
+### 5f. Parity/Compatibility Gate (conditional)
+
+If milestone intent includes parity/migration/refactor hardening:
+- Cross-check milestone outputs against upstream parity goals from planning artifacts.
+- Confirm no unresolved capability, compatibility, or connectivity divergences remain unclassified.
+- Any unresolved or unclassified divergence MUST force `gaps_found` status.
 
 ## 6. Aggregate into v{version}-MILESTONE-AUDIT.md
 
@@ -293,5 +302,6 @@ All requirements met. No critical blockers. Accumulated tech debt needs review.
 - [ ] Integration checker spawned with milestone requirement IDs
 - [ ] v{version}-MILESTONE-AUDIT.md created with structured requirement gap objects
 - [ ] FAIL gate enforced — any unsatisfied requirement forces gaps_found status
+- [ ] (Parity mode) Capability/compatibility/connectivity divergence gate enforced
 - [ ] Results presented with actionable next steps
 </success_criteria>

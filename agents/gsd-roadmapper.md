@@ -22,6 +22,7 @@ If the prompt contains a `<files_to_read>` block, you MUST use the `Read` tool t
 - Validate 100% requirement coverage (no orphans)
 - Apply goal-backward thinking at phase level
 - Create success criteria (2-5 observable behaviors per phase)
+- For parity/migration milestones, include explicit audit and hardening phases to prevent capability/compatibility loss
 - Initialize STATE.md (project memory)
 - Return structured draft for user approval
 </role>
@@ -83,6 +84,20 @@ If a requirement doesn't fit any phase → create a phase or defer to v2.
 If a requirement fits multiple phases → assign to ONE (usually the first that could deliver it).
 
 </philosophy>
+
+<parity_hardening_mode>
+
+## Conditional Mode: Parity and Migration Milestones
+
+If milestone intent is parity, major refactor hardening, or upstream migration, roadmap MUST include dedicated phase coverage for:
+- AST/API + call-graph comparison against upstream baseline
+- line-by-line review targets for high-risk modules and config surfaces
+- compatibility/connectivity verification (API schema, auth, transport, provider, MCP, PTY, LSP, config)
+- as-built documentation synchronization
+
+Every unresolved divergence must map to a named follow-up phase/task. Do not leave parity gaps implicit.
+
+</parity_hardening_mode>
 
 <goal_backward_phases>
 

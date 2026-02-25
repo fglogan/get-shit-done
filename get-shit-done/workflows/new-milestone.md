@@ -233,6 +233,7 @@ Good requirements are:
 - **User-centric:** "User can X" (not "System does Y")
 - **Atomic:** One capability per requirement (not "User can login and manage profile")
 - **Independent:** Minimal dependencies on other requirements
+- **Parity-safe (for migration/refactor milestones):** Explicitly preserve capability, compatibility, and connectivity expectations
 
 Present FULL requirements list for confirmation:
 
@@ -288,7 +289,13 @@ Create roadmap for milestone v[X.Y]:
 4. Derive 2-5 success criteria per phase (observable user behaviors)
 5. Validate 100% coverage
 6. Write files immediately (ROADMAP.md, STATE.md, update REQUIREMENTS.md traceability)
-7. Return ROADMAP CREATED with summary
+7. If milestone is parity/migration/refactor hardening, include explicit phases for:
+   - AST + call graph comparison against upstream
+   - line-by-line review of high-risk code/config/structure files
+   - compatibility/connectivity verification
+   - as-built documentation sync
+   - tracking unresolved divergences as explicit pending tasks
+8. Return ROADMAP CREATED with summary
 
 Write files first, then return.
 </instructions>

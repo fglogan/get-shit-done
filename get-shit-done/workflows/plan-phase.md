@@ -6,6 +6,7 @@ Create executable phase prompts (PLAN.md files) for a roadmap phase with integra
 Read all files referenced by the invoking prompt's execution_context before starting.
 
 @~/.claude/get-shit-done/references/ui-brand.md
+@~/.claude/get-shit-done/references/parity-refactor-guidance.md
 </required_reading>
 
 <process>
@@ -298,6 +299,9 @@ Planner prompt:
 
 **Project instructions:** Read ./CLAUDE.md if exists — follow project-specific guidelines
 **Project skills:** Check .agents/skills/ directory (if exists) — read SKILL.md files, plans should account for project skill rules
+
+**Parity hardening mode (conditional):**
+If phase goal/context includes parity, migration, upstream sync, refactor hardening, or zero capability/compatibility loss, enforce parity-refactor guidance. Plans MUST include audit and implementation tasks for AST + call graph analysis, upstream comparison coverage, compatibility/connectivity verification, and as-built docs synchronization.
 </planning_context>
 
 <downstream_consumer>
@@ -315,6 +319,8 @@ Output consumed by /gsd:execute-phase. Plans need:
 - [ ] Dependencies correctly identified
 - [ ] Waves assigned for parallel execution
 - [ ] must_haves derived from phase goal
+- [ ] (Parity mode) Every identified upstream divergence is either implemented in plan tasks or captured as explicit pending follow-up work
+- [ ] (Parity mode) Plans include compatibility/connectivity verification and as-built documentation update tasks
 </quality_gate>
 ```
 
@@ -363,6 +369,9 @@ Checker prompt:
 
 **Project instructions:** Read ./CLAUDE.md if exists — verify plans honor project guidelines
 **Project skills:** Check .agents/skills/ directory (if exists) — verify plans account for project skill rules
+
+**Parity hardening mode (conditional):**
+If phase context indicates parity/migration/refactor hardening, fail verification when plans do not include AST/call-graph + upstream comparison coverage, compatibility/connectivity checks, and as-built doc sync tasks.
 </verification_context>
 
 <expected_output>
@@ -564,6 +573,7 @@ Verification: {Passed | Passed with override | Skipped}
 - [ ] Plans created (PLANNING COMPLETE or CHECKPOINT handled)
 - [ ] gsd-plan-checker spawned with CONTEXT.md
 - [ ] Verification passed OR user override OR max iterations with user decision
+- [ ] (Parity mode) Plans explicitly cover audit depth, compatibility/connectivity verification, and as-built doc updates
 - [ ] User sees status between agent spawns
 - [ ] User knows next steps
 </success_criteria>
