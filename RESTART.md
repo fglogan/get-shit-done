@@ -1,10 +1,10 @@
 # Session Restart File
 
 **Project:** genesis-gsd-planning v1.20.6
-**Session:** 2
+**Session:** 3
 **Last Updated:** 2026-02-28
-**Last Commit:** `78e25e1` — feat: project rename, library hardening, test expansion to 210 tests
-**Status:** All three tracks complete. Codebase stable. Rust rewrite in progress (Phase 11).
+**Last Commit:** `b40dffa` — chore: close 13 completed Rust rewrite br issues
+**Status:** Rust rewrite complete (all 12 phases). Command audit done (31→7 reduction). Designing simplified surface + br library integration.
 
 ---
 
@@ -19,6 +19,26 @@
 ---
 
 ## Session History
+
+### Session 3 — 2026-02-28
+
+**Snapshot commit:** `b40dffa` (1 file changed, 13 insertions/13 deletions)
+
+**Completed:**
+- **Closed all 13 br issues**: Rust rewrite epic (`get-shit-done-pbf`) + 12 phase tasks (P0-P11) marked closed with commit references
+- **Full command audit**: Analyzed all 31 commands, 33 workflows, 11 agents for redundancy and overcomplication
+  - Identified 31→7 command reduction (77% cut)
+  - 10 commands absorbed into others, 5 replaced by `br`, 4 not workflow commands, 3 questionable value
+  - 11→6-7 agent consolidation (merge researchers, merge verifiers)
+  - Mapped dependency chains: 8 of 31 commands are internal plumbing exposed as user-facing
+- **Design decision**: `br` integration via library crate (not subprocess)
+
+**Key audit findings:**
+- Pre-planning ceremony (discuss-phase, research-phase, list-phase-assumptions) → absorbed by plan-phase
+- Session management (pause-work, resume-work, progress) → replaced by `br ready` + state
+- Milestone lifecycle (audit, plan-gaps, complete, cleanup) → single complete-milestone command
+- Phase CRUD (add, insert, remove) → CLI subcommands only, not user-facing slash commands
+- Essential 7: new-project, plan-phase, execute-phase, verify-work, quick, complete-milestone, settings
 
 ### Session 2 — 2026-02-28
 
@@ -44,13 +64,30 @@
 
 ## Parallel Work: Rust Rewrite
 
-A full Rust rewrite is in progress at `/Volumes/Genesis-Build/Projects/genesis-gsd-planner/` (GitHub: `fglogan/genesis-gsd-planner`).
+The full Rust rewrite is **COMPLETE** at `/Volumes/Genesis-Build/Projects/genesis-gsd-planner/` (GitHub: `fglogan/genesis-gsd-planner`).
 
-**Status:** Phase 11 of 12 (Integration Test Port) — all 8 test files written, not yet compiled/run.
-**Completed phases:** P01-P10 (scaffold through content embedding)
-**Remaining:** P11 compile+fix, P12 distribution
+**Status:** All 12 phases complete. 265 tests (113 unit + 152 integration), zero failures, 2.9MB binary.
+**All `br` issues closed:** Epic `get-shit-done-pbf` + 12 child tasks (P0-P11).
+**Next:** Push Rust repo to GitHub (upstream needs setup), simplified 3-7 command surface, `br` library integration.
 
-The `br` issue tracker (`.beads/`) tracks the 12 Rust rewrite phases as the `get-shit-done-pbf` epic.
+---
+
+## Active Design: Simplified Command Surface
+
+**Problem:** 31 slash commands is too many. Most are ceremony or internal plumbing.
+
+**Proposed 7 core commands:**
+1. `new-project` — Bootstrap (research → roadmap → scaffold)
+2. `plan-phase` — Research + question + plan (absorbs discuss, research, assumptions)
+3. `execute-phase` — Execute plan with verification (absorbs verify-phase, transition)
+4. `verify-work` — Standalone UAT re-verification + debugging
+5. `quick` — Ad-hoc task outside phase structure
+6. `complete-milestone` — Audit + gap-plan + archive + cleanup (absorbs 4 commands)
+7. `settings` — All configuration
+
+**Open question:** Whether to add 3 high-level human-friendly entry points (`/gsd-brainstorm`, `/gsd-feature`, `/gsd-plan`) that route to the 7 internal commands, or just expose the 7 directly.
+
+**Integration:** `br` (genesis-issues) via library crate dependency. Replaces pause/resume/progress/todos.
 
 ---
 
@@ -89,5 +126,7 @@ The `br` issue tracker (`.beads/`) tracks the 12 Rust rewrite phases as the `get
 
 1. Run tests first: `npm test` — should show 210 pass, 0 fail
 2. Node.js codebase is stable. No known issues pending.
-3. Rust rewrite is the active workstream — see `/Volumes/Genesis-Build/Projects/genesis-gsd-planner/`
-4. Do not modify `.gitignore` — CLAUDE.md and .claude/ are intentionally excluded from git.
+3. **Rust rewrite is COMPLETE** — see `/Volumes/Genesis-Build/Projects/genesis-gsd-planner/`
+4. **Active work:** Simplified command surface design (31→7) + `br` library integration
+5. **Next actions:** Push Rust repo to GitHub, design `br` crate integration, create new `br` epic for simplified surface
+6. Do not modify `.gitignore` — CLAUDE.md and .claude/ are intentionally excluded from git.
