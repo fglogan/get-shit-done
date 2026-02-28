@@ -611,40 +611,42 @@ function cmdInitProgress(cwd, raw) {
     const dirs = entries.filter(e => e.isDirectory()).map(e => e.name).sort();
 
     for (const dir of dirs) {
-      const match = dir.match(/^(\d+(?:\.\d+)*)-?(.*)/);
-      const phaseNumber = match ? match[1] : dir;
-      const phaseName = match && match[2] ? match[2] : null;
+      try {
+        const match = dir.match(/^(\d+(?:\.\d+)*)-?(.*)/);
+        const phaseNumber = match ? match[1] : dir;
+        const phaseName = match && match[2] ? match[2] : null;
 
-      const phasePath = path.join(phasesDir, dir);
-      const phaseFiles = fs.readdirSync(phasePath);
+        const phasePath = path.join(phasesDir, dir);
+        const phaseFiles = fs.readdirSync(phasePath);
 
-      const plans = phaseFiles.filter(f => f.endsWith('-PLAN.md') || f === 'PLAN.md');
-      const summaries = phaseFiles.filter(f => f.endsWith('-SUMMARY.md') || f === 'SUMMARY.md');
-      const hasResearch = phaseFiles.some(f => f.endsWith('-RESEARCH.md') || f === 'RESEARCH.md');
+        const plans = phaseFiles.filter(f => f.endsWith('-PLAN.md') || f === 'PLAN.md');
+        const summaries = phaseFiles.filter(f => f.endsWith('-SUMMARY.md') || f === 'SUMMARY.md');
+        const hasResearch = phaseFiles.some(f => f.endsWith('-RESEARCH.md') || f === 'RESEARCH.md');
 
-      const status = summaries.length >= plans.length && plans.length > 0 ? 'complete' :
-                     plans.length > 0 ? 'in_progress' :
-                     hasResearch ? 'researched' : 'pending';
+        const status = summaries.length >= plans.length && plans.length > 0 ? 'complete' :
+                       plans.length > 0 ? 'in_progress' :
+                       hasResearch ? 'researched' : 'pending';
 
-      const phaseInfo = {
-        number: phaseNumber,
-        name: phaseName,
-        directory: path.join('.planning', 'phases', dir),
-        status,
-        plan_count: plans.length,
-        summary_count: summaries.length,
-        has_research: hasResearch,
-      };
+        const phaseInfo = {
+          number: phaseNumber,
+          name: phaseName,
+          directory: path.join('.planning', 'phases', dir),
+          status,
+          plan_count: plans.length,
+          summary_count: summaries.length,
+          has_research: hasResearch,
+        };
 
-      phases.push(phaseInfo);
+        phases.push(phaseInfo);
 
-      // Find current (first incomplete with plans) and next (first pending)
-      if (!currentPhase && (status === 'in_progress' || status === 'researched')) {
-        currentPhase = phaseInfo;
-      }
-      if (!nextPhase && status === 'pending') {
-        nextPhase = phaseInfo;
-      }
+        // Find current (first incomplete with plans) and next (first pending)
+        if (!currentPhase && (status === 'in_progress' || status === 'researched')) {
+          currentPhase = phaseInfo;
+        }
+        if (!nextPhase && status === 'pending') {
+          nextPhase = phaseInfo;
+        }
+      } catch {}
     }
   } catch {}
 

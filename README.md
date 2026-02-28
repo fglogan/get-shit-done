@@ -6,18 +6,18 @@
 
 **Solves context rot — the quality degradation that happens as Claude fills its context window.**
 
-[![npm version](https://img.shields.io/npm/v/get-shit-done-cc?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/get-shit-done-cc)
-[![npm downloads](https://img.shields.io/npm/dm/get-shit-done-cc?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/get-shit-done-cc)
+[![npm version](https://img.shields.io/npm/v/genesis-gsd-planning?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/genesis-gsd-planning)
+[![npm downloads](https://img.shields.io/npm/dm/genesis-gsd-planning?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/genesis-gsd-planning)
 [![Discord](https://img.shields.io/badge/Discord-Join-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/5JJgD5svVS)
 [![X (Twitter)](https://img.shields.io/badge/X-@gsd__foundation-000000?style=for-the-badge&logo=x&logoColor=white)](https://x.com/gsd_foundation)
 [![$GSD Token](https://img.shields.io/badge/$GSD-Dexscreener-1C1C1C?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMCIgZmlsbD0iIzAwRkYwMCIvPjwvc3ZnPg==&logoColor=00FF00)](https://dexscreener.com/solana/dwudwjvan7bzkw9zwlbyv6kspdlvhwzrqy6ebk8xzxkv)
-[![GitHub stars](https://img.shields.io/github/stars/glittercowboy/get-shit-done?style=for-the-badge&logo=github&color=181717)](https://github.com/glittercowboy/get-shit-done)
+[![GitHub stars](https://img.shields.io/github/stars/fglogan/genesis-gsd-planner?style=for-the-badge&logo=github&color=181717)](https://github.com/fglogan/genesis-gsd-planner)
 [![License](https://img.shields.io/badge/license-MIT-blue?style=for-the-badge)](LICENSE)
 
 <br>
 
 ```bash
-npx get-shit-done-cc@latest
+npx genesis-gsd-planning@latest
 ```
 
 **Works on Mac, Windows, and Linux.**
@@ -75,7 +75,7 @@ People who want to describe what they want and have it built correctly — witho
 ## Getting Started
 
 ```bash
-npx get-shit-done-cc@latest
+npx genesis-gsd-planning@latest
 ```
 
 The installer prompts you to choose:
@@ -95,7 +95,7 @@ Verify with:
 GSD evolves fast. Update periodically:
 
 ```bash
-npx get-shit-done-cc@latest
+npx genesis-gsd-planning@latest
 ```
 
 <details>
@@ -103,21 +103,21 @@ npx get-shit-done-cc@latest
 
 ```bash
 # Claude Code
-npx get-shit-done-cc --claude --global   # Install to ~/.claude/
-npx get-shit-done-cc --claude --local    # Install to ./.claude/
+npx genesis-gsd-planning --claude --global   # Install to ~/.claude/
+npx genesis-gsd-planning --claude --local    # Install to ./.claude/
 
 # OpenCode (open source, free models)
-npx get-shit-done-cc --opencode --global # Install to ~/.config/opencode/
+npx genesis-gsd-planning --opencode --global # Install to ~/.config/opencode/
 
 # Gemini CLI
-npx get-shit-done-cc --gemini --global   # Install to ~/.gemini/
+npx genesis-gsd-planning --gemini --global   # Install to ~/.gemini/
 
 # Codex (skills-first)
-npx get-shit-done-cc --codex --global    # Install to ~/.codex/
-npx get-shit-done-cc --codex --local     # Install to ./.codex/
+npx genesis-gsd-planning --codex --global    # Install to ~/.codex/
+npx genesis-gsd-planning --codex --local     # Install to ./.codex/
 
 # All runtimes
-npx get-shit-done-cc --all --global      # Install to all directories
+npx genesis-gsd-planning --all --global      # Install to all directories
 ```
 
 Use `--global` (`-g`) or `--local` (`-l`) to skip the location prompt.
@@ -131,7 +131,7 @@ Use `--claude`, `--opencode`, `--gemini`, `--codex`, or `--all` to skip the runt
 Clone the repository and run the installer locally:
 
 ```bash
-git clone https://github.com/glittercowboy/get-shit-done.git
+git clone https://github.com/fglogan/genesis-gsd-planner.git
 cd get-shit-done
 node bin/install.js --claude --local
 ```
@@ -631,18 +631,18 @@ This prevents Claude from reading these files entirely, regardless of what comma
 
 **Commands not working as expected?**
 - Run `/gsd:help` to verify installation
-- Re-run `npx get-shit-done-cc` to reinstall
+- Re-run `npx genesis-gsd-planning` to reinstall
 
 **Updating to the latest version?**
 ```bash
-npx get-shit-done-cc@latest
+npx genesis-gsd-planning@latest
 ```
 
 **Using Docker or containerized environments?**
 
 If file reads fail with tilde paths (`~/.claude/...`), set `CLAUDE_CONFIG_DIR` before installing:
 ```bash
-CLAUDE_CONFIG_DIR=/home/youruser/.claude npx get-shit-done-cc --global
+CLAUDE_CONFIG_DIR=/home/youruser/.claude npx genesis-gsd-planning --global
 ```
 This ensures absolute paths are used instead of `~` which may not expand correctly in containers.
 
@@ -652,14 +652,14 @@ To remove GSD completely:
 
 ```bash
 # Global installs
-npx get-shit-done-cc --claude --global --uninstall
-npx get-shit-done-cc --opencode --global --uninstall
-npx get-shit-done-cc --codex --global --uninstall
+npx genesis-gsd-planning --claude --global --uninstall
+npx genesis-gsd-planning --opencode --global --uninstall
+npx genesis-gsd-planning --codex --global --uninstall
 
 # Local installs (current project)
-npx get-shit-done-cc --claude --local --uninstall
-npx get-shit-done-cc --opencode --local --uninstall
-npx get-shit-done-cc --codex --local --uninstall
+npx genesis-gsd-planning --claude --local --uninstall
+npx genesis-gsd-planning --opencode --local --uninstall
+npx genesis-gsd-planning --codex --local --uninstall
 ```
 
 This removes all GSD commands, agents, hooks, and settings while preserving your other configurations.
@@ -668,7 +668,7 @@ This removes all GSD commands, agents, hooks, and settings while preserving your
 
 ## Community Ports
 
-OpenCode, Gemini CLI, and Codex are now natively supported via `npx get-shit-done-cc`.
+OpenCode, Gemini CLI, and Codex are now natively supported via `npx genesis-gsd-planning`.
 
 These community ports pioneered multi-runtime support:
 
@@ -681,11 +681,11 @@ These community ports pioneered multi-runtime support:
 
 ## Star History
 
-<a href="https://star-history.com/#glittercowboy/get-shit-done&Date">
+<a href="https://star-history.com/#fglogan/genesis-gsd-planner&Date">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=glittercowboy/get-shit-done&type=Date&theme=dark" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=glittercowboy/get-shit-done&type=Date" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=glittercowboy/get-shit-done&type=Date" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=fglogan/genesis-gsd-planner&type=Date&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=fglogan/genesis-gsd-planner&type=Date" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=fglogan/genesis-gsd-planner&type=Date" />
  </picture>
 </a>
 

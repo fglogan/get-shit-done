@@ -398,23 +398,25 @@ function cmdProgressRender(cwd, format, raw) {
     const dirs = entries.filter(e => e.isDirectory()).map(e => e.name).sort((a, b) => comparePhaseNum(a, b));
 
     for (const dir of dirs) {
-      const dm = dir.match(/^(\d+(?:\.\d+)*)-?(.*)/);
-      const phaseNum = dm ? dm[1] : dir;
-      const phaseName = dm && dm[2] ? dm[2].replace(/-/g, ' ') : '';
-      const phaseFiles = fs.readdirSync(path.join(phasesDir, dir));
-      const plans = phaseFiles.filter(f => f.endsWith('-PLAN.md') || f === 'PLAN.md').length;
-      const summaries = phaseFiles.filter(f => f.endsWith('-SUMMARY.md') || f === 'SUMMARY.md').length;
+      try {
+        const dm = dir.match(/^(\d+(?:\.\d+)*)-?(.*)/);
+        const phaseNum = dm ? dm[1] : dir;
+        const phaseName = dm && dm[2] ? dm[2].replace(/-/g, ' ') : '';
+        const phaseFiles = fs.readdirSync(path.join(phasesDir, dir));
+        const plans = phaseFiles.filter(f => f.endsWith('-PLAN.md') || f === 'PLAN.md').length;
+        const summaries = phaseFiles.filter(f => f.endsWith('-SUMMARY.md') || f === 'SUMMARY.md').length;
 
-      totalPlans += plans;
-      totalSummaries += summaries;
+        totalPlans += plans;
+        totalSummaries += summaries;
 
-      let status;
-      if (plans === 0) status = 'Pending';
-      else if (summaries >= plans) status = 'Complete';
-      else if (summaries > 0) status = 'In Progress';
-      else status = 'Planned';
+        let status;
+        if (plans === 0) status = 'Pending';
+        else if (summaries >= plans) status = 'Complete';
+        else if (summaries > 0) status = 'In Progress';
+        else status = 'Planned';
 
-      phases.push({ number: phaseNum, name: phaseName, plans, summaries, status });
+        phases.push({ number: phaseNum, name: phaseName, plans, summaries, status });
+      } catch {}
     }
   } catch {}
 

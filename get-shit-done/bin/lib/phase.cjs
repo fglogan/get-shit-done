@@ -158,38 +158,47 @@ function cmdFindPhase(cwd, phase, raw) {
 
   const notFound = { found: false, directory: null, phase_number: null, phase_name: null, plans: [], summaries: [] };
 
+  let entries;
   try {
-    const entries = fs.readdirSync(phasesDir, { withFileTypes: true });
-    const dirs = entries.filter(e => e.isDirectory()).map(e => e.name).sort((a, b) => comparePhaseNum(a, b));
-
-    const match = dirs.find(d => d.startsWith(normalized));
-    if (!match) {
-      output(notFound, raw, '');
-      return;
-    }
-
-    const dirMatch = match.match(/^(\d+[A-Z]?(?:\.\d+)*)-?(.*)/i);
-    const phaseNumber = dirMatch ? dirMatch[1] : normalized;
-    const phaseName = dirMatch && dirMatch[2] ? dirMatch[2] : null;
-
-    const phaseDir = path.join(phasesDir, match);
-    const phaseFiles = fs.readdirSync(phaseDir);
-    const plans = phaseFiles.filter(f => f.endsWith('-PLAN.md') || f === 'PLAN.md').sort();
-    const summaries = phaseFiles.filter(f => f.endsWith('-SUMMARY.md') || f === 'SUMMARY.md').sort();
-
-    const result = {
-      found: true,
-      directory: path.join('.planning', 'phases', match),
-      phase_number: phaseNumber,
-      phase_name: phaseName,
-      plans,
-      summaries,
-    };
-
-    output(result, raw, result.directory);
+    entries = fs.readdirSync(phasesDir, { withFileTypes: true });
   } catch {
     output(notFound, raw, '');
+    return;
   }
+
+  const dirs = entries.filter(e => e.isDirectory()).map(e => e.name).sort((a, b) => comparePhaseNum(a, b));
+
+  const match = dirs.find(d => d.startsWith(normalized));
+  if (!match) {
+    output(notFound, raw, '');
+    return;
+  }
+
+  const dirMatch = match.match(/^(\d+[A-Z]?(?:\.\d+)*)-?(.*)/i);
+  const phaseNumber = dirMatch ? dirMatch[1] : normalized;
+  const phaseName = dirMatch && dirMatch[2] ? dirMatch[2] : null;
+
+  let phaseFiles;
+  try {
+    phaseFiles = fs.readdirSync(path.join(phasesDir, match));
+  } catch {
+    output(notFound, raw, '');
+    return;
+  }
+
+  const plans = phaseFiles.filter(f => f.endsWith('-PLAN.md') || f === 'PLAN.md').sort();
+  const summaries = phaseFiles.filter(f => f.endsWith('-SUMMARY.md') || f === 'SUMMARY.md').sort();
+
+  const result = {
+    found: true,
+    directory: path.join('.planning', 'phases', match),
+    phase_number: phaseNumber,
+    phase_name: phaseName,
+    plans,
+    summaries,
+  };
+
+  output(result, raw, result.directory);
 }
 
 function cmdPhasePlanIndex(cwd, phase, raw) {
@@ -528,7 +537,9 @@ function cmdPhaseRemove(cwd, targetPhase, options, raw) {
           }
         }
       }
-    } catch {}
+    } catch (e) {
+      process.stderr.write(`Warning: decimal renumbering partially failed after renaming ${renamedDirs.length} dirs, ${renamedFiles.length} files: ${e.message}\n`);
+    }
 
   } else {
     // Integer removal: renumber all subsequent integer phases
@@ -588,7 +599,9 @@ function cmdPhaseRemove(cwd, targetPhase, options, raw) {
           }
         }
       }
-    } catch {}
+    } catch (e) {
+      process.stderr.write(`Warning: integer renumbering partially failed after renaming ${renamedDirs.length} dirs, ${renamedFiles.length} files: ${e.message}\n`);
+    }
   }
 
   // Update ROADMAP.md
@@ -796,7 +809,9 @@ function cmdPhaseComplete(cwd, phaseNum, raw) {
         }
       }
     }
-  } catch {}
+  } catch (e) {
+    process.stderr.write(`Warning: could not determine next phase: ${e.message}\n`);
+  }
 
   // Update STATE.md
   if (fs.existsSync(statePath)) {

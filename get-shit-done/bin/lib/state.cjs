@@ -53,37 +53,39 @@ function cmdStateLoad(cwd, raw) {
 
 function cmdStateGet(cwd, section, raw) {
   const statePath = path.join(cwd, '.planning', 'STATE.md');
+  let content;
   try {
-    const content = fs.readFileSync(statePath, 'utf-8');
-
-    if (!section) {
-      output({ content }, raw, content);
-      return;
-    }
-
-    // Try to find markdown section or field
-    const fieldEscaped = section.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
-    // Check for **field:** value
-    const fieldPattern = new RegExp(`\\*\\*${fieldEscaped}:\\*\\*\\s*(.*)`, 'i');
-    const fieldMatch = content.match(fieldPattern);
-    if (fieldMatch) {
-      output({ [section]: fieldMatch[1].trim() }, raw, fieldMatch[1].trim());
-      return;
-    }
-
-    // Check for ## Section
-    const sectionPattern = new RegExp(`##\\s*${fieldEscaped}\\s*\n([\\s\\S]*?)(?=\\n##|$)`, 'i');
-    const sectionMatch = content.match(sectionPattern);
-    if (sectionMatch) {
-      output({ [section]: sectionMatch[1].trim() }, raw, sectionMatch[1].trim());
-      return;
-    }
-
-    output({ error: `Section or field "${section}" not found` }, raw, '');
+    content = fs.readFileSync(statePath, 'utf-8');
   } catch {
     error('STATE.md not found');
+    return;
   }
+
+  if (!section) {
+    output({ content }, raw, content);
+    return;
+  }
+
+  // Try to find markdown section or field
+  const fieldEscaped = section.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+  // Check for **field:** value
+  const fieldPattern = new RegExp(`\\*\\*${fieldEscaped}:\\*\\*\\s*(.*)`, 'i');
+  const fieldMatch = content.match(fieldPattern);
+  if (fieldMatch) {
+    output({ [section]: fieldMatch[1].trim() }, raw, fieldMatch[1].trim());
+    return;
+  }
+
+  // Check for ## Section
+  const sectionPattern = new RegExp(`##\\s*${fieldEscaped}\\s*\n([\\s\\S]*?)(?=\\n##|$)`, 'i');
+  const sectionMatch = content.match(sectionPattern);
+  if (sectionMatch) {
+    output({ [section]: sectionMatch[1].trim() }, raw, sectionMatch[1].trim());
+    return;
+  }
+
+  output({ error: `Section or field "${section}" not found` }, raw, '');
 }
 
 function readTextArgOrFile(cwd, value, filePath, label) {
@@ -99,30 +101,38 @@ function readTextArgOrFile(cwd, value, filePath, label) {
 
 function cmdStatePatch(cwd, patches, raw) {
   const statePath = path.join(cwd, '.planning', 'STATE.md');
+  let content;
   try {
-    let content = fs.readFileSync(statePath, 'utf-8');
-    const results = { updated: [], failed: [] };
-
-    for (const [field, value] of Object.entries(patches)) {
-      const fieldEscaped = field.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      const pattern = new RegExp(`(\\*\\*${fieldEscaped}:\\*\\*\\s*)(.*)`, 'i');
-
-      if (pattern.test(content)) {
-        content = content.replace(pattern, (_match, prefix) => `${prefix}${value}`);
-        results.updated.push(field);
-      } else {
-        results.failed.push(field);
-      }
-    }
-
-    if (results.updated.length > 0) {
-      fs.writeFileSync(statePath, content, 'utf-8');
-    }
-
-    output(results, raw, results.updated.length > 0 ? 'true' : 'false');
+    content = fs.readFileSync(statePath, 'utf-8');
   } catch {
     error('STATE.md not found');
+    return;
   }
+
+  const results = { updated: [], failed: [] };
+
+  for (const [field, value] of Object.entries(patches)) {
+    const fieldEscaped = field.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const pattern = new RegExp(`(\\*\\*${fieldEscaped}:\\*\\*\\s*)(.*)`, 'i');
+
+    if (pattern.test(content)) {
+      content = content.replace(pattern, (_match, prefix) => `${prefix}${value}`);
+      results.updated.push(field);
+    } else {
+      results.failed.push(field);
+    }
+  }
+
+  if (results.updated.length > 0) {
+    try {
+      fs.writeFileSync(statePath, content, 'utf-8');
+    } catch (e) {
+      error(`Failed to write STATE.md: ${e.message}`);
+      return;
+    }
+  }
+
+  output(results, raw, results.updated.length > 0 ? 'true' : 'false');
 }
 
 function cmdStateUpdate(cwd, field, value) {
@@ -131,19 +141,27 @@ function cmdStateUpdate(cwd, field, value) {
   }
 
   const statePath = path.join(cwd, '.planning', 'STATE.md');
+  let content;
   try {
-    let content = fs.readFileSync(statePath, 'utf-8');
-    const fieldEscaped = field.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const pattern = new RegExp(`(\\*\\*${fieldEscaped}:\\*\\*\\s*)(.*)`, 'i');
-    if (pattern.test(content)) {
-      content = content.replace(pattern, (_match, prefix) => `${prefix}${value}`);
-      fs.writeFileSync(statePath, content, 'utf-8');
-      output({ updated: true });
-    } else {
-      output({ updated: false, reason: `Field "${field}" not found in STATE.md` });
-    }
+    content = fs.readFileSync(statePath, 'utf-8');
   } catch {
     output({ updated: false, reason: 'STATE.md not found' });
+    return;
+  }
+
+  const fieldEscaped = field.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const pattern = new RegExp(`(\\*\\*${fieldEscaped}:\\*\\*\\s*)(.*)`, 'i');
+  if (pattern.test(content)) {
+    content = content.replace(pattern, (_match, prefix) => `${prefix}${value}`);
+    try {
+      fs.writeFileSync(statePath, content, 'utf-8');
+    } catch (e) {
+      error(`Failed to write STATE.md: ${e.message}`);
+      return;
+    }
+    output({ updated: true });
+  } else {
+    output({ updated: false, reason: `Field "${field}" not found in STATE.md` });
   }
 }
 

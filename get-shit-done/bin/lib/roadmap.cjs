@@ -137,18 +137,20 @@ function cmdRoadmapAnalyze(cwd, raw) {
       const dirMatch = dirs.find(d => d.startsWith(normalized + '-') || d === normalized);
 
       if (dirMatch) {
-        const phaseFiles = fs.readdirSync(path.join(phasesDir, dirMatch));
-        planCount = phaseFiles.filter(f => f.endsWith('-PLAN.md') || f === 'PLAN.md').length;
-        summaryCount = phaseFiles.filter(f => f.endsWith('-SUMMARY.md') || f === 'SUMMARY.md').length;
-        hasContext = phaseFiles.some(f => f.endsWith('-CONTEXT.md') || f === 'CONTEXT.md');
-        hasResearch = phaseFiles.some(f => f.endsWith('-RESEARCH.md') || f === 'RESEARCH.md');
+        try {
+          const phaseFiles = fs.readdirSync(path.join(phasesDir, dirMatch));
+          planCount = phaseFiles.filter(f => f.endsWith('-PLAN.md') || f === 'PLAN.md').length;
+          summaryCount = phaseFiles.filter(f => f.endsWith('-SUMMARY.md') || f === 'SUMMARY.md').length;
+          hasContext = phaseFiles.some(f => f.endsWith('-CONTEXT.md') || f === 'CONTEXT.md');
+          hasResearch = phaseFiles.some(f => f.endsWith('-RESEARCH.md') || f === 'RESEARCH.md');
 
-        if (summaryCount >= planCount && planCount > 0) diskStatus = 'complete';
-        else if (summaryCount > 0) diskStatus = 'partial';
-        else if (planCount > 0) diskStatus = 'planned';
-        else if (hasResearch) diskStatus = 'researched';
-        else if (hasContext) diskStatus = 'discussed';
-        else diskStatus = 'empty';
+          if (summaryCount >= planCount && planCount > 0) diskStatus = 'complete';
+          else if (summaryCount > 0) diskStatus = 'partial';
+          else if (planCount > 0) diskStatus = 'planned';
+          else if (hasResearch) diskStatus = 'researched';
+          else if (hasContext) diskStatus = 'discussed';
+          else diskStatus = 'empty';
+        } catch {}
       }
     } catch {}
 

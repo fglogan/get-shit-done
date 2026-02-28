@@ -102,25 +102,27 @@ function cmdMilestoneComplete(cwd, version, options, raw) {
     const dirs = entries.filter(e => e.isDirectory()).map(e => e.name).sort();
 
     for (const dir of dirs) {
-      phaseCount++;
-      const phaseFiles = fs.readdirSync(path.join(phasesDir, dir));
-      const plans = phaseFiles.filter(f => f.endsWith('-PLAN.md') || f === 'PLAN.md');
-      const summaries = phaseFiles.filter(f => f.endsWith('-SUMMARY.md') || f === 'SUMMARY.md');
-      totalPlans += plans.length;
+      try {
+        phaseCount++;
+        const phaseFiles = fs.readdirSync(path.join(phasesDir, dir));
+        const plans = phaseFiles.filter(f => f.endsWith('-PLAN.md') || f === 'PLAN.md');
+        const summaries = phaseFiles.filter(f => f.endsWith('-SUMMARY.md') || f === 'SUMMARY.md');
+        totalPlans += plans.length;
 
-      // Extract one-liners from summaries
-      for (const s of summaries) {
-        try {
-          const content = fs.readFileSync(path.join(phasesDir, dir, s), 'utf-8');
-          const fm = extractFrontmatter(content);
-          if (fm['one-liner']) {
-            accomplishments.push(fm['one-liner']);
-          }
-          // Count tasks
-          const taskMatches = content.match(/##\s*Task\s*\d+/gi) || [];
-          totalTasks += taskMatches.length;
-        } catch {}
-      }
+        // Extract one-liners from summaries
+        for (const s of summaries) {
+          try {
+            const content = fs.readFileSync(path.join(phasesDir, dir, s), 'utf-8');
+            const fm = extractFrontmatter(content);
+            if (fm['one-liner']) {
+              accomplishments.push(fm['one-liner']);
+            }
+            // Count tasks
+            const taskMatches = content.match(/##\s*Task\s*\d+/gi) || [];
+            totalTasks += taskMatches.length;
+          } catch {}
+        }
+      } catch {}
     }
   } catch {}
 
@@ -185,7 +187,9 @@ function cmdMilestoneComplete(cwd, version, options, raw) {
         fs.renameSync(path.join(phasesDir, dir), path.join(phaseArchiveDir, dir));
       }
       phasesArchived = phaseDirNames.length > 0;
-    } catch {}
+    } catch (e) {
+      process.stderr.write(`Warning: phase archival failed: ${e.message}\n`);
+    }
   }
 
   const result = {

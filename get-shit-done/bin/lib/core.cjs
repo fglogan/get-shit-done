@@ -105,7 +105,8 @@ function loadConfig(cwd) {
       parallelization,
       brave_search: get('brave_search') ?? defaults.brave_search,
     };
-  } catch {
+  } catch (e) {
+    process.stderr.write(`Warning: config parse failed, using defaults: ${e.message}\n`);
     return defaults;
   }
 }
@@ -189,12 +190,18 @@ function comparePhaseNum(a, b) {
 }
 
 function searchPhaseInDir(baseDir, relBase, normalized) {
+  let entries;
   try {
-    const entries = fs.readdirSync(baseDir, { withFileTypes: true });
-    const dirs = entries.filter(e => e.isDirectory()).map(e => e.name).sort((a, b) => comparePhaseNum(a, b));
-    const match = dirs.find(d => d.startsWith(normalized));
-    if (!match) return null;
+    entries = fs.readdirSync(baseDir, { withFileTypes: true });
+  } catch {
+    return null;
+  }
 
+  const dirs = entries.filter(e => e.isDirectory()).map(e => e.name).sort((a, b) => comparePhaseNum(a, b));
+  const match = dirs.find(d => d.startsWith(normalized));
+  if (!match) return null;
+
+  try {
     const dirMatch = match.match(/^(\d+[A-Z]?(?:\.\d+)*)-?(.*)/i);
     const phaseNumber = dirMatch ? dirMatch[1] : normalized;
     const phaseName = dirMatch && dirMatch[2] ? dirMatch[2] : null;
@@ -336,7 +343,8 @@ function getRoadmapPhaseInternal(cwd, phaseNum) {
       goal,
       section,
     };
-  } catch {
+  } catch (e) {
+    process.stderr.write(`Warning: could not parse ROADMAP.md phase ${phaseNum}: ${e.message}\n`);
     return null;
   }
 }

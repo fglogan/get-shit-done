@@ -159,65 +159,82 @@ function spliceFrontmatter(content, newObj) {
 function parseMustHavesBlock(content, blockName) {
   // Extract a specific block from must_haves in raw frontmatter YAML
   // Handles 3-level nesting: must_haves > artifacts/key_links > [{path, provides, ...}]
+  // Uses relative indent detection — works with any indent width (2-space, 4-space, etc.)
   const fmMatch = content.match(/^---\n([\s\S]+?)\n---/);
   if (!fmMatch) return [];
 
   const yaml = fmMatch[1];
-  // Find the block (e.g., "truths:", "artifacts:", "key_links:")
-  const blockPattern = new RegExp(`^\\s{4}${blockName}:\\s*$`, 'm');
-  const blockStart = yaml.search(blockPattern);
-  if (blockStart === -1) return [];
+  // Find the block header (e.g., "truths:", "artifacts:", "key_links:") at any indent
+  const blockPattern = new RegExp(`^(\\s+)${blockName}:\\s*$`, 'm');
+  const blockMatch = yaml.match(blockPattern);
+  if (!blockMatch) return [];
 
+  const blockIndent = blockMatch[1].length; // indent of the block header itself
+  const blockStart = yaml.indexOf(blockMatch[0]);
   const afterBlock = yaml.slice(blockStart);
   const blockLines = afterBlock.split('\n').slice(1); // skip the header line
 
   const items = [];
   let current = null;
+  let listItemIndent = -1; // detected from first "- " line
 
   for (const line of blockLines) {
-    // Stop at same or lower indent level (non-continuation)
+    // Skip empty lines
     if (line.trim() === '') continue;
     const indent = line.match(/^(\s*)/)[1].length;
-    if (indent <= 4 && line.trim() !== '') break; // back to must_haves level or higher
+    // Stop at same or lower indent level than the block header
+    if (indent <= blockIndent) break;
 
-    if (line.match(/^\s{6}-\s+/)) {
-      // New list item at 6-space indent
-      if (current) items.push(current);
-      current = {};
-      // Check if it's a simple string item
-      const simpleMatch = line.match(/^\s{6}-\s+"?([^"]+)"?\s*$/);
-      if (simpleMatch && !line.includes(':')) {
-        current = simpleMatch[1];
-      } else {
-        // Key-value on same line as dash: "- path: value"
-        const kvMatch = line.match(/^\s{6}-\s+(\w+):\s*"?([^"]*)"?\s*$/);
-        if (kvMatch) {
-          current = {};
-          current[kvMatch[1]] = kvMatch[2];
-        }
+    // List item: "- value" or "- key: value" — must be deeper than blockIndent
+    const listItemMatch = line.match(/^(\s+)-\s+(.*)/);
+    if (listItemMatch && listItemMatch[1].length > blockIndent) {
+      const dashIndent = listItemMatch[1].length;
+      const itemContent = listItemMatch[2].trim();
+
+      // First list item sets the reference indent for top-level items
+      if (listItemIndent === -1) {
+        listItemIndent = dashIndent;
       }
-    } else if (current && typeof current === 'object') {
-      // Continuation key-value at 8+ space indent
-      const kvMatch = line.match(/^\s{8,}(\w+):\s*"?([^"]*)"?\s*$/);
-      if (kvMatch) {
-        const val = kvMatch[2];
-        // Try to parse as number
-        current[kvMatch[1]] = /^\d+$/.test(val) ? parseInt(val, 10) : val;
-      }
-      // Array items under a key
-      const arrMatch = line.match(/^\s{10,}-\s+"?([^"]+)"?\s*$/);
-      if (arrMatch) {
-        // Find the last key added and convert to array
+
+      // Nested array item — dash at deeper indent than top-level list items
+      if (dashIndent > listItemIndent && current && typeof current === 'object') {
+        const val = itemContent.replace(/^["']|["']$/g, '');
         const keys = Object.keys(current);
         const lastKey = keys[keys.length - 1];
         if (lastKey && !Array.isArray(current[lastKey])) {
           current[lastKey] = current[lastKey] ? [current[lastKey]] : [];
         }
-        if (lastKey) current[lastKey].push(arrMatch[1]);
+        if (lastKey) current[lastKey].push(val);
+        continue;
+      }
+
+      // New top-level list item for this block
+      if (current !== null) items.push(current);
+
+      // Check if it's a simple string item (no colon key-value)
+      if (!itemContent.includes(':') || (itemContent.startsWith('"') && itemContent.endsWith('"'))) {
+        current = itemContent.replace(/^["']|["']$/g, '');
+      } else {
+        // Key-value on same line as dash: "- path: value"
+        const kvMatch = itemContent.match(/^(\w+):\s*"?([^"]*)"?\s*$/);
+        if (kvMatch) {
+          current = {};
+          current[kvMatch[1]] = kvMatch[2];
+        } else {
+          current = itemContent.replace(/^["']|["']$/g, '');
+        }
+      }
+    } else if (current && typeof current === 'object') {
+      // Continuation key-value — deeper indent than list item
+      const kvMatch = line.match(/^\s+(\w+):\s*"?([^"]*)"?\s*$/);
+      if (kvMatch) {
+        const val = kvMatch[2];
+        // Try to parse as number
+        current[kvMatch[1]] = /^\d+$/.test(val) ? parseInt(val, 10) : val;
       }
     }
   }
-  if (current) items.push(current);
+  if (current !== null) items.push(current);
 
   return items;
 }

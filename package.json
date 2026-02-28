@@ -1,9 +1,9 @@
 {
-  "name": "get-shit-done-cc",
+  "name": "genesis-gsd-planning",
   "version": "1.20.6",
   "description": "A meta-prompting, context engineering and spec-driven development system for Claude Code, OpenCode, Gemini and Codex by TÂCHES.",
   "bin": {
-    "get-shit-done-cc": "bin/install.js"
+    "genesis-gsd-planning": "bin/install.js"
   },
   "files": [
     "bin",
@@ -29,11 +29,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/glittercowboy/get-shit-done.git"
+    "url": "git+https://github.com/fglogan/genesis-gsd-planner.git"
   },
-  "homepage": "https://github.com/glittercowboy/get-shit-done",
+  "homepage": "https://github.com/fglogan/genesis-gsd-planner",
   "bugs": {
-    "url": "https://github.com/glittercowboy/get-shit-done/issues"
+    "url": "https://github.com/fglogan/genesis-gsd-planner/issues"
   },
   "engines": {
     "node": ">=16.7.0"

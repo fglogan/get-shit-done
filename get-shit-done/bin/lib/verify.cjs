@@ -460,31 +460,35 @@ function cmdValidateConsistency(cwd, raw) {
     const dirs = entries.filter(e => e.isDirectory()).map(e => e.name).sort();
 
     for (const dir of dirs) {
-      const phaseFiles = fs.readdirSync(path.join(phasesDir, dir));
-      const plans = phaseFiles.filter(f => f.endsWith('-PLAN.md')).sort();
+      try {
+        const phaseFiles = fs.readdirSync(path.join(phasesDir, dir));
+        const plans = phaseFiles.filter(f => f.endsWith('-PLAN.md')).sort();
 
-      // Extract plan numbers
-      const planNums = plans.map(p => {
-        const pm = p.match(/-(\d{2})-PLAN\.md$/);
-        return pm ? parseInt(pm[1], 10) : null;
-      }).filter(n => n !== null);
+        // Extract plan numbers
+        const planNums = plans.map(p => {
+          const pm = p.match(/-(\d{2})-PLAN\.md$/);
+          return pm ? parseInt(pm[1], 10) : null;
+        }).filter(n => n !== null);
 
-      for (let i = 1; i < planNums.length; i++) {
-        if (planNums[i] !== planNums[i - 1] + 1) {
-          warnings.push(`Gap in plan numbering in ${dir}: plan ${planNums[i - 1]} → ${planNums[i]}`);
+        for (let i = 1; i < planNums.length; i++) {
+          if (planNums[i] !== planNums[i - 1] + 1) {
+            warnings.push(`Gap in plan numbering in ${dir}: plan ${planNums[i - 1]} → ${planNums[i]}`);
+          }
         }
-      }
 
-      // Check: plans without summaries (completed plans)
-      const summaries = phaseFiles.filter(f => f.endsWith('-SUMMARY.md'));
-      const planIds = new Set(plans.map(p => p.replace('-PLAN.md', '')));
-      const summaryIds = new Set(summaries.map(s => s.replace('-SUMMARY.md', '')));
+        // Check: plans without summaries (completed plans)
+        const summaries = phaseFiles.filter(f => f.endsWith('-SUMMARY.md'));
+        const planIds = new Set(plans.map(p => p.replace('-PLAN.md', '')));
+        const summaryIds = new Set(summaries.map(s => s.replace('-SUMMARY.md', '')));
 
-      // Summary without matching plan is suspicious
-      for (const sid of summaryIds) {
-        if (!planIds.has(sid)) {
-          warnings.push(`Summary ${sid}-SUMMARY.md in ${dir} has no matching PLAN.md`);
+        // Summary without matching plan is suspicious
+        for (const sid of summaryIds) {
+          if (!planIds.has(sid)) {
+            warnings.push(`Summary ${sid}-SUMMARY.md in ${dir} has no matching PLAN.md`);
+          }
         }
+      } catch {
+        warnings.push(`Could not read phase directory: ${dir}`);
       }
     }
   } catch {}
@@ -495,16 +499,24 @@ function cmdValidateConsistency(cwd, raw) {
     const dirs = entries.filter(e => e.isDirectory()).map(e => e.name);
 
     for (const dir of dirs) {
-      const phaseFiles = fs.readdirSync(path.join(phasesDir, dir));
-      const plans = phaseFiles.filter(f => f.endsWith('-PLAN.md'));
+      try {
+        const phaseFiles = fs.readdirSync(path.join(phasesDir, dir));
+        const plans = phaseFiles.filter(f => f.endsWith('-PLAN.md'));
 
-      for (const plan of plans) {
-        const content = fs.readFileSync(path.join(phasesDir, dir, plan), 'utf-8');
-        const fm = extractFrontmatter(content);
+        for (const plan of plans) {
+          try {
+            const content = fs.readFileSync(path.join(phasesDir, dir, plan), 'utf-8');
+            const fm = extractFrontmatter(content);
 
-        if (!fm.wave) {
-          warnings.push(`${dir}/${plan}: missing 'wave' in frontmatter`);
+            if (!fm.wave) {
+              warnings.push(`${dir}/${plan}: missing 'wave' in frontmatter`);
+            }
+          } catch {
+            warnings.push(`${dir}/${plan}: could not read or parse frontmatter`);
+          }
         }
+      } catch {
+        warnings.push(`Could not read phase directory: ${dir}`);
       }
     }
   } catch {}
@@ -631,17 +643,19 @@ function cmdValidateHealth(cwd, options, raw) {
     const entries = fs.readdirSync(phasesDir, { withFileTypes: true });
     for (const e of entries) {
       if (!e.isDirectory()) continue;
-      const phaseFiles = fs.readdirSync(path.join(phasesDir, e.name));
-      const plans = phaseFiles.filter(f => f.endsWith('-PLAN.md') || f === 'PLAN.md');
-      const summaries = phaseFiles.filter(f => f.endsWith('-SUMMARY.md') || f === 'SUMMARY.md');
-      const summaryBases = new Set(summaries.map(s => s.replace('-SUMMARY.md', '').replace('SUMMARY.md', '')));
+      try {
+        const phaseFiles = fs.readdirSync(path.join(phasesDir, e.name));
+        const plans = phaseFiles.filter(f => f.endsWith('-PLAN.md') || f === 'PLAN.md');
+        const summaries = phaseFiles.filter(f => f.endsWith('-SUMMARY.md') || f === 'SUMMARY.md');
+        const summaryBases = new Set(summaries.map(s => s.replace('-SUMMARY.md', '').replace('SUMMARY.md', '')));
 
-      for (const plan of plans) {
-        const planBase = plan.replace('-PLAN.md', '').replace('PLAN.md', '');
-        if (!summaryBases.has(planBase)) {
-          addIssue('info', 'I001', `${e.name}/${plan} has no SUMMARY.md`, 'May be in progress');
+        for (const plan of plans) {
+          const planBase = plan.replace('-PLAN.md', '').replace('PLAN.md', '');
+          if (!summaryBases.has(planBase)) {
+            addIssue('info', 'I001', `${e.name}/${plan} has no SUMMARY.md`, 'May be in progress');
+          }
         }
-      }
+      } catch {}
     }
   } catch {}
 
